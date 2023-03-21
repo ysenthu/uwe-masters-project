@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mirror
+  labels:
+    app: mirror
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mirror
+  template:
+    metadata:
+      labels:
+        app: mirror
+    spec:
+      volumes:
+      - name: envoy-yaml
+        configMap:
+          name: envoy-yaml
+      containers:
+        - name: mirror
+          image: envoyproxy/envoy-dev:575ab6ab48b22ca0b6e9b6acae51aba3f6b7fc8a
+          ports:
+            - containerPort: 80
+          volumeMounts:
+          - name: envoy-yaml
+            mountPath: /etc/envoy/envoy.yaml
+            subPath: envoy.yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mirror
+spec:
+  selector:
+    app: mirror
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

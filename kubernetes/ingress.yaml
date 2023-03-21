@@ -1,0 +1,24 @@
+  apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    annotations:
+      nginx.ingress.kubernetes.io/limit-connections: "50000"
+      nginx.ingress.kubernetes.io/limit-rps: "50000"
+      nginx.ingress.kubernetes.io/limit-rpm: "50000"
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+      nginx.ingress.kubernetes.io/ssl-passthrough: "false"
+      nginx.ingress.kubernetes.io/proxy-body-size: 50m
+    name: mirror
+  spec:
+    ingressClassName: nginx
+    rules:
+      - host: wordpress.senthu.io
+        http:
+          paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: mirror
+                port:
+                  number: 80

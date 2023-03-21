@@ -1,0 +1,25 @@
+version: '3'
+services:
+  envoy:
+    image: envoyproxy/envoy-dev:575ab6ab48b22ca0b6e9b6acae51aba3f6b7fc8a
+    ports:
+      - "80:80"
+    volumes:
+      - ./envoy1.yaml:/etc/envoy/envoy.yaml
+      - ./private.key:/private.key
+      - ./ca_bundle.crt:/ca_bundle.crt
+      - ./certificate.crt:/certificate.crt
+  web:
+    image: nginx
+    # volumes:
+    # - ./templates:/etc/nginx/templates
+    ports:
+    - "8080:80"
+    environment:
+    #- NGINX_HOST=foobar.com
+    - NGINX_PORT=80
+  mirror:
+    image: 336144032973.dkr.ecr.eu-central-1.amazonaws.com/bf-api-training-nestjs-sample-service:v96
+    #build: ./pyflask
+    ports:
+    - "5000:5000"
